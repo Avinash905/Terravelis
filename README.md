@@ -1,63 +1,64 @@
-# ChatterBox
+# ChatterBox — Tune Into the Planet's Live Chatter
 
-<h3>Description :</h3> 
-This is a web application where you can chat with others.
+An interactive **3D Night Earth** telemetry & location-intelligence platform that visualizes real-time activity happening across the planet right now — seismic waves, active wildfires & volcanoes, the International Space Station's live orbit, upcoming rocket launches, commercial aircraft overhead, live world radio streams, human knowledge edits, and iconic local landmarks.
 
-👉[Click here](https://chatterbox-main.onrender.com/) to check out the app.
-<br/>
+---
 
-### 📃Features :
+## Live Capabilities
 
-<ul>
-<li>User can register and login.</li>
-<li>You can search for others who are using this web app.</li>
-<li>User can chat and send emojis to others.</li>
-<li>User can create groups.</li>
-<li>You can add or remove members from the group.</li>
-<li>All your data will be stored on the database so that they can be restored once you login again.</li>
-</ul>
+### 8 Toggleable Global Layers
+- **Seismic Waves (USGS):** Real-time earthquakes & tremors worldwide sized by magnitude and depth.
+- **Wildfires, Volcanoes & Cyclones (NASA EONET):** Active natural events tracked by NASA satellites.
+- **International Space Station (ISS):** Live orbital coordinates updated every few seconds, ground-track trajectory, and a **Ride ISS** orbital camera lock.
+- **Rocket Launches (Launch Library 2):** Upcoming missions from ISRO Sriharikota, SpaceX Starbase, Cape Canaveral, Kourou, Mahia, and Tanegashima with live T-minus countdowns.
+- **World Radio Towers (Radio-Browser):** Geo-tagged HTTPS live radio broadcasts across every continent — click any tower to stream live audio.
+- **Live Human Knowledge (Wikimedia EventStreams):** Real-time Wikipedia edits sparking across countries every second.
+- **Subsea Internet Cables:** Transoceanic fiber-optic backbone routes with capacity and landing points.
+- **Visitor Pins (MongoDB + Socket.io):** Drop a live beacon and message from your city onto the globe.
 
-<hr/>
+### Click Anywhere on Earth — Location X-Ray Drawer
+Clicking any city, monument, coastline, or ocean opens a frosted-glass intelligence drawer with four views:
+1. **Places to Visit:** Iconic landmarks and attractions nearby with high-resolution Wikipedia photography, summaries, and one-click zoom.
+2. **Snapshot:** Live surface weather, wind, humidity, UV index, US Air Quality Index (Open-Meteo), live local clock, and country profile (flag, capital, population, currency, spoken languages).
+3. **Live Radar:** Real commercial aircraft currently flying within 250 km (ADS-B / OpenSky), nearby earthquakes, active NASA alerts, rocket launchpads, and regional visitor pins.
+4. **Radio:** Tune into live local radio stations broadcasting from that country or region.
 
-### Sign up page
+### Controls & Extras
+- **`Cmd+K` / `Ctrl+K` Global Command Palette:** Instantly search and fly to any city, volcano, spaceport, or landmark.
+- **Planet Ambient Synth:** Procedural Web Audio synthesizer that translates live planetary activity into spatial pentatonic chimes.
+- **Zero-Wall Guest Mode + Optional Account:** Explore everything immediately without signing up; optionally sign in to sync your saved **Orbital Watchlist** across devices.
 
-<img src="./client/src/images/signup.png" alt='signup'/>
+---
 
-### Sign in page
+## Tech Stack
 
-<img src="./client/src/images/signin.png" alt='signin'/>
+- **Frontend:** React 19, Vite 8, Three.js (`react-globe.gl`), Tailwind CSS v4, Framer Motion, Lucide Icons, Socket.io Client, Web Audio API
+- **Backend:** Node.js (>=22), Express 5, Socket.io 4.8, MongoDB & Mongoose 9 (with automatic in-memory fallback for zero-config local runs), JWT + bcryptjs
 
-### Chats page
+---
 
-<img src="./client/src/images/chats.png" alt='chats'/>
+## Local Development
 
-### Creating groups
+```bash
+# 1. Install backend dependencies & start API + Socket.io server (port 5050)
+npm install
+npm run dev
 
-<img src="./client/src/images/creategroup.png" alt='create group'/>
+# 2. In a second terminal, install & start Vite frontend (port 5173)
+cd client
+npm install
+npm run dev
+```
 
-### View your profile
+*(No `.env` or API keys are required to run locally — all planetary feeds are keyless public streams, and user/beacon storage automatically falls back to an in-memory store if `MONGO_URI` is not set.)*
 
-<img src="./client/src/images/profile.png" alt='profile'/>
+---
 
-### Update your group
+## Zero-Cold-Start Free Deployment (Vercel + Render)
 
-<img src="./client/src/images/updategroup.png" alt='update group'/>
-
-<hr/>
-
-### Tools and technologies used :
-
-<a href="https://www.w3.org/html/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/html5/html5-original-wordmark.svg" alt="html5" width="40" height="40"/> </a>
-<a href="https://www.w3schools.com/css/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/css3/css3-original-wordmark.svg" alt="css3" width="40" height="40"/> </a>
-<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/javascript/javascript-original.svg" alt="javascript" width="35" height="35"/> </a>
-<a href="https://reactjs.org/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/react/react-original-wordmark.svg" alt="react" width="35" height="35"/> </a>
-<a href="https://nodejs.org" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/nodejs/nodejs-original-wordmark.svg" alt="nodejs" width="40" height="40"/> </a>
-<a href="https://expressjs.com" target="_blank" rel="noreferrer"> <img src="https://github.com/MarioTerron/logo-images/raw/master/logos/expressjs.png" alt="express"  height="20"/> </a>
-<a href="https://www.mongodb.com/" target="_blank" rel="noreferrer"> <img src="https://raw.githubusercontent.com/devicons/devicon/master/icons/mongodb/mongodb-original-wordmark.svg" alt="mongodb" width="40" height="40"/> </a>
-<a href="https://socket.io/" target="_blank" rel="noreferrer"> <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Socket-io.svg/900px-Socket-io.svg.png?20200308235956" alt="socket.io" width="40" height="40"/> </a>
-<br/>
-
-### Connect with me :
-
-<a href="https://twitter.com/avinashdunna" target="blank"><img align="center" src="https://img.icons8.com/color/48/000000/linkedin.png" alt="Avinash905 | LinkedIn" height="35" width="35" /></a>
-<a href="https://twitter.com/avinashdunna" target="blank"><img align="center" src="https://raw.githubusercontent.com/rahuldkjain/github-profile-readme-generator/master/src/images/icons/Social/twitter.svg" alt="avinashdunna" height="30" width="40" /></a>
+1. **Frontend on Vercel (instant global CDN, never sleeps):**
+   - Import `Avinash905/ChatterBox` on Vercel and set **Root Directory** to `client`.
+   - Add environment variable `VITE_API_BASE_URL=https://<your-render-service>.onrender.com`.
+2. **Backend on Render Free Tier:**
+   - Connect `Avinash905/ChatterBox` on Render (`npm install` / `npm start`), set `MONGO_URI`, `JWT_SECRET`, and `ORIGIN=https://<your-vercel-app>.vercel.app`.
+   - Optional: add a free 12-minute ping on `cron-job.org` pointing to `https://<your-render-service>.onrender.com/api/health` to keep the single free Render instance warm 24/7 within Render's 750 free hours/month.
