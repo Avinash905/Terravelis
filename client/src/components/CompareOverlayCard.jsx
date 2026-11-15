@@ -148,7 +148,7 @@ export default function CompareOverlayCard({
                       </div>
                       <div className="mt-1 flex items-baseline justify-between font-mono-tech">
                         <span className="text-[14px] font-semibold text-white">
-                          {city.weather ? `${city.weather.tempC}°C` : "—"}
+                          {city.weather ? `${city.weather.tempC}°C` : "N/A"}
                         </span>
                         <span className="text-[10.5px] text-zinc-400">
                           {city.weather ? `${city.weather.windKmh} km/h` : ""}

@@ -1,62 +1,33 @@
-# Terravelis — Live 3D Earth Telemetry & Location Intelligence
+# Terravelis
 
-**Terravelis** is an interactive **3D Earth** telemetry and location-intelligence platform that visualizes real-time activity across the planet — seismic waves, active wildfires & volcanoes, the International Space Station's live orbit, upcoming rocket launches, commercial aircraft overhead, live world radio streams, human knowledge edits, two-city flight route comparisons, and iconic local landmarks.
+Interactive 3D Earth built with React, Three.js, Node.js, and Socket.io. Pulls live public feeds onto a single globe so you can inspect earthquakes, wildfires, volcanoes, live flights, world radio stations, the ISS orbit, and nearby landmarks for any point on Earth.
 
----
+Live demo: [terravelis.vercel.app](https://terravelis.vercel.app)
 
-## Live Capabilities
+## Features
 
-### 8 Toggleable Global Layers
-- **Seismic Waves (USGS):** Real-time earthquakes & tremors worldwide sized by magnitude and depth.
-- **Natural Events (NASA EONET):** Active wildfires, erupting volcanoes, and severe storms tracked by NASA satellites.
-- **International Space Station (ISS):** Live orbital coordinates updated every few seconds, 90-minute ground-track trajectory, and an **ISS View** orbital camera lock.
-- **Rocket Launches (Launch Library 2):** Upcoming missions from ISRO Sriharikota, SpaceX Starbase, Cape Canaveral, Kourou, Mahia, and Tanegashima with live T-minus countdowns.
-- **World Radio Towers (Radio-Browser):** Geo-tagged HTTPS live radio broadcasts across every continent — click any tower to stream live audio.
-- **Wikipedia Live (Wikimedia EventStreams):** Real-time human edits sparking across countries every second.
-- **Subsea Internet Cables:** Transoceanic fiber-optic backbone routes with capacity and landing points.
-- **Visitor Pins (MongoDB + Socket.io):** Drop a public pin and short note from your city onto the globe.
+- **Live Global Layers:** Toggle real-time USGS earthquakes, NASA EONET wildfires/volcanoes/storms, upcoming orbital rocket launches (Launch Library 2), live Wikipedia edits, subsea internet cables, world radio towers, and visitor pins.
+- **ISS Orbital Lock:** Track the International Space Station's live position and 90-minute ground track in 3D.
+- **Click-Anywhere Location Inspector:** Click any city, coastline, or ocean to view nearby landmarks with Wikipedia photos, surface weather & US AQI (Open-Meteo), country details, local radio streams, and commercial aircraft within 250 km.
+- **Two-City Route Comparison:** Measure great-circle distance, estimated flight duration, timezone difference, and weather between any two locations.
+- **World Tour & Sunlight Scrubber:** Hands-free camera tour across active events, Night vs. Daylight satellite textures, 24h UTC solar slider, `?lat=&lng=` shareable links, and PNG snapshot export.
 
-### Click Anywhere on Earth — Location Inspector
-Clicking any city, monument, coastline, or ocean opens an inspector drawer with four tabs:
-1. **Places:** Iconic landmarks and tourist attractions nearby with high-resolution Wikipedia photography, summaries, and one-click focus.
-2. **Overview:** Live surface weather, wind, humidity, UV index, US Air Quality Index (Open-Meteo), live local clock, and country profile (flag, capital, population, currency, spoken languages).
-3. **Radar:** Real commercial aircraft currently flying within 250 km (ADS-B / OpenSky), nearby earthquakes, active NASA alerts, rocket launchpads, and regional visitor pins.
-4. **Radio:** Tune into live local radio stations broadcasting from that country or region.
+## Stack
 
-### Interactive Tools
-- **Live World Tour (`Tour`):** Auto-pilot camera mode flying every 8 seconds across Earth's top active events.
-- **Two-City Compare (`Compare`):** Draws a spherical great-circle flight route between any two places with distance (`km` / `mi`), flight duration, time-zone offset, and side-by-side weather & AQI.
-- **Night / Daylight Earth + 24h Solar Slider:** Toggle Night City Lights vs. NASA Daylight Satellite view and scrub sunlight across 24 hours UTC.
-- **Shareable Deep-Links & Snapshot Cards:** Copy direct `?lat=&lng=` coordinate links or export `1280×720` telemetry PNG cards.
+- **Frontend:** React 19, Vite 8, Three.js (`react-globe.gl`), Tailwind CSS v4, Framer Motion, Socket.io Client, Web Audio API
+- **Backend:** Node.js, Express 5, Socket.io, MongoDB / Mongoose 9, JWT + bcryptjs
 
----
-
-## Tech Stack
-
-- **Frontend:** React 19, Vite 8, Three.js (`react-globe.gl`), Tailwind CSS v4, Framer Motion, Lucide Icons, Socket.io Client, Web Audio API
-- **Backend:** Node.js (>=22), Express 5, Socket.io 4.8, MongoDB & Mongoose 9 (with automatic in-memory fallback for zero-config local runs), JWT + bcryptjs
-
----
-
-## Local Development
+## Running Locally
 
 ```bash
-# 1. Install backend dependencies & start API + Socket.io server (port 5050)
+# Backend (port 5050)
 npm install
 npm run dev
 
-# 2. In a second terminal, install & start Vite frontend (port 5173)
+# Frontend (port 5173)
 cd client
 npm install
 npm run dev
 ```
 
----
-
-## Deployment (Vercel + Render)
-
-1. **Frontend on Vercel (`https://terravelis.vercel.app`):**
-   - Import `Avinash905/Terravelis` on Vercel with Project Name `terravelis` (keep default root directory `.` — root `vercel.json` builds `client/dist`).
-   - Add environment variable `VITE_API_BASE_URL=https://<your-render-service>.onrender.com`.
-2. **Backend on Render:**
-   - Connect `Avinash905/Terravelis` on Render (`npm run render-build` / `npm start`), set `MONGO_URI`, `JWT_SECRET`, and `ORIGIN=https://terravelis.vercel.app`.
+No API keys are required for the live Earth feeds. If `MONGO_URI` is not set locally, the server automatically uses an in-memory store for accounts and pins.

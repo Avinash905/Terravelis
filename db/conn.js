@@ -5,7 +5,7 @@ let connected = false;
 const connectDB = async () => {
   const uri = process.env.MONGO_URI;
   if (!uri) {
-    console.log("[DB] No MONGO_URI set — running with in-memory store (all live Earth features active).");
+    console.log("[DB] No MONGO_URI set, using in-memory store.");
     return false;
   }
 
@@ -24,7 +24,7 @@ const connectDB = async () => {
     return true;
   } catch (err) {
     connected = false;
-    console.warn(`[DB] MongoDB unavailable (${err.message}) — falling back to in-memory store.`);
+    console.warn(`[DB] MongoDB unavailable (${err.message}), using in-memory store.`);
     return false;
   }
 };

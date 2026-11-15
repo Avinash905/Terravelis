@@ -99,7 +99,7 @@ export const describeAqi = (aqi) => {
 };
 
 export const formatCompactNumber = (num) => {
-  if (!num || Number.isNaN(Number(num))) return "—";
+  if (!num || Number.isNaN(Number(num))) return "N/A";
   return new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 1 }).format(
     Number(num)
   );

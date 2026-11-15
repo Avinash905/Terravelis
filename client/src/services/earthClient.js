@@ -356,7 +356,7 @@ export const connectRealtimeSocket = (handlers = {}) => {
     typeof window !== "undefined" &&
     (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1");
   if (!API_BASE && !isLocalDev && typeof window !== "undefined" && window.location.hostname.endsWith(".vercel.app")) {
-    // Static Vercel deployment without VITE_API_BASE_URL set — skip pointless WS retries
+    // Static Vercel deployment without VITE_API_BASE_URL set, skip WS retries
     return { disconnect: () => {} };
   }
   const socketUrl =

@@ -82,7 +82,7 @@ const SEED_BEACONS = [
     countryCode: "KE",
     lat: -1.2921,
     lng: 36.8219,
-    message: "Warm Rift Valley breeze today — exploring undersea cable landings along East Africa.",
+    message: "Warm Rift Valley breeze today, checking out undersea cable landings along East Africa.",
     category: "tech",
     likes: 8,
     createdAt: new Date(Date.now() - 1000 * 60 * 350).toISOString(),

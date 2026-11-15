@@ -544,7 +544,7 @@ export default function App() {
       const coords = await resolveUserCoordinates();
       handleFlyAndInspect(coords.lat, coords.lng, 1.18);
     } catch {
-      notify("Could not detect location — press ⌘K to search your city.");
+      notify("Could not detect location. Press ⌘K to search your city.");
     }
   }, [handleFlyAndInspect, notify]);
 

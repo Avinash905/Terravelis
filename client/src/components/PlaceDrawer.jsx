@@ -178,7 +178,7 @@ export default function PlaceDrawer({
             {/* Monospace Coordinate & Time Strip */}
             <div className="mt-2.5 flex items-center justify-between text-[11px] font-mono-tech text-zinc-500">
               <span>
-                {intel ? formatCoords(intel.coordinates.lat, intel.coordinates.lng) : "—"}
+                {intel ? formatCoords(intel.coordinates.lat, intel.coordinates.lng) : "..."}
               </span>
               {clockText && <span className="text-zinc-400">{clockText}</span>}
             </div>
@@ -436,7 +436,7 @@ export default function PlaceDrawer({
                           UV Index
                         </span>
                         <span className="text-[12px] font-mono-tech text-zinc-100 mt-0.5 block">
-                          {intel.weather.uvIndex ?? "—"}
+                          {intel.weather.uvIndex ?? "N/A"}
                         </span>
                       </div>
                     </div>
@@ -458,7 +458,7 @@ export default function PlaceDrawer({
                       <div>
                         <span className="text-[10.5px] text-zinc-500 block">Capital</span>
                         <span className="text-zinc-200 font-medium">
-                          {intel.country.capital || "—"}
+                          {intel.country.capital || "N/A"}
                         </span>
                       </div>
                       <div>
@@ -470,13 +470,13 @@ export default function PlaceDrawer({
                       <div>
                         <span className="text-[10.5px] text-zinc-500 block">Currency</span>
                         <span className="text-zinc-200">
-                          {intel.country.currencies?.join(", ") || "—"}
+                          {intel.country.currencies?.join(", ") || "N/A"}
                         </span>
                       </div>
                       <div>
                         <span className="text-[10.5px] text-zinc-500 block">Region</span>
                         <span className="text-zinc-200">
-                          {intel.country.region || intel.location?.continent || "—"}
+                          {intel.country.region || intel.location?.continent || "N/A"}
                         </span>
                       </div>
                     </div>
