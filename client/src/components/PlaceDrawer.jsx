@@ -85,11 +85,11 @@ export default function PlaceDrawer({
     <AnimatePresence>
       {isOpen && (
         <motion.aside
-          initial={{ x: "102%", opacity: 0.5 }}
-          animate={{ x: 0, opacity: 1 }}
-          exit={{ x: "102%", opacity: 0 }}
-          transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed top-16 right-3 bottom-16 z-30 w-[calc(100vw-1.5rem)] sm:w-[400px] surface-panel rounded-xl flex flex-col overflow-hidden"
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 24 }}
+          transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+          className="fixed inset-x-2 bottom-14 h-[58vh] sm:inset-x-auto sm:top-16 sm:right-3 sm:bottom-16 sm:h-auto sm:w-[400px] z-30 surface-panel rounded-xl flex flex-col overflow-hidden"
         >
           {/* Header */}
           <div className="px-4 pt-4 pb-0 border-b border-white/[0.08]">

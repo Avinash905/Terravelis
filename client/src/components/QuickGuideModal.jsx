@@ -62,7 +62,7 @@ export default function QuickGuideModal({
             exit={{ opacity: 0, scale: 0.98, y: 8 }}
             transition={{ duration: 0.18 }}
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md surface-panel rounded-xl p-5"
+            className="w-full max-w-md max-h-[86vh] overflow-y-auto custom-scroll surface-panel rounded-xl p-4 sm:p-5"
           >
             <div className="flex items-start justify-between gap-4 pb-3 border-b border-white/[0.08]">
               <div>

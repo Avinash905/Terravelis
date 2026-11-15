@@ -2,16 +2,17 @@ import { io } from "socket.io-client";
 
 const API_BASE = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
 
-const apiFetch = async (path, options = {}, timeoutMs = 9500) => {
+const apiFetch = async (path, options = {}, timeoutMs = 12000) => {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
   try {
+    const headers = { ...(options.headers || {}) };
+    if (options.body && !headers["Content-Type"]) {
+      headers["Content-Type"] = "application/json";
+    }
     const res = await fetch(`${API_BASE}${path}`, {
       ...options,
-      headers: {
-        "Content-Type": "application/json",
-        ...(options.headers || {}),
-      },
+      headers,
       signal: controller.signal,
     });
     const contentType = res.headers.get("content-type") || "";

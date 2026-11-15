@@ -6,6 +6,7 @@ import Hint from "./Hint";
 
 export default function SolarTimeControl({
   drawerOpen,
+  tourActive,
   surfaceMode,
   solarMinutesUtc,
   isLiveTime,
@@ -17,8 +18,12 @@ export default function SolarTimeControl({
 
   return (
     <div
-      className={`fixed bottom-16 z-20 flex flex-col items-end gap-2 transition-all duration-200 ${
-        drawerOpen ? "hidden lg:flex lg:right-[418px]" : "right-3"
+      className={`fixed bottom-14 sm:bottom-16 z-20 flex flex-col items-end gap-2 transition-all duration-200 ${
+        drawerOpen
+          ? "hidden lg:flex lg:right-[418px]"
+          : tourActive
+          ? "hidden md:flex md:right-3"
+          : "right-2.5 sm:right-3"
       }`}
     >
       <AnimatePresence>

@@ -309,7 +309,8 @@ export default function App() {
         setSelectedCoords({ lat, lng });
         syncUrlCoords({ lat, lng });
         setFocusedPoint(markerPoint);
-        setDrawerOpen(true);
+        const isMobile = typeof window !== "undefined" && window.innerWidth < 640;
+        setDrawerOpen(!isMobile);
         setPlaceLoading(true);
 
         const route = computeGreatCircleRoute(
@@ -554,6 +555,9 @@ export default function App() {
       setCompareOrigin(intel);
       setCompareTarget(null);
       setAwaitingCompareTarget(true);
+      if (typeof window !== "undefined" && window.innerWidth < 640) {
+        setDrawerOpen(false);
+      }
       notify(`Select a second place on Earth to compare with ${intel.location?.name}`);
     },
     [notify]
@@ -1026,6 +1030,7 @@ export default function App() {
       {/* Daylight / Night Earth + 24h Sunlight Scrubber */}
       <SolarTimeControl
         drawerOpen={drawerOpen}
+        tourActive={tourActive}
         surfaceMode={surfaceMode}
         solarMinutesUtc={solarMinutesUtc}
         isLiveTime={isLiveTime}

@@ -30,6 +30,9 @@ export default function Hint({
   }, [side]);
 
   const handleEnter = () => {
+    if (typeof window !== "undefined" && window.matchMedia("(hover: none)").matches) {
+      return;
+    }
     clearTimeout(timerRef.current);
     timerRef.current = setTimeout(computePosition, 130);
   };
@@ -49,7 +52,7 @@ export default function Hint({
       onMouseEnter={handleEnter}
       onMouseLeave={handleLeave}
       onMouseDown={handleLeave}
-      className="inline-flex"
+      className="inline-flex shrink-0"
     >
       {children}
       {coords &&

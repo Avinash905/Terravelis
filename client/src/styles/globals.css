@@ -61,6 +61,25 @@
   background: rgba(255, 255, 255, 0.28);
 }
 
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px #18181b inset !important;
+  -webkit-text-fill-color: #fafafa !important;
+  caret-color: #fafafa;
+  transition: background-color 9999s ease-out 0s;
+}
+
 @keyframes eqBar {
   0%,
   100% {

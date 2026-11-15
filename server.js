@@ -16,14 +16,35 @@ const app = express();
 const server = http.createServer(app);
 const port = Number(process.env.PORT) || 5050;
 
-const allowedOrigins = process.env.ORIGIN
-  ? process.env.ORIGIN.split(",").map((o) => o.trim()).filter(Boolean)
-  : true;
+const configuredOrigins = process.env.ORIGIN
+  ? process.env.ORIGIN.split(",")
+      .map((o) => o.trim().replace(/\/+$/, ""))
+      .filter(Boolean)
+  : [];
+
+const corsOriginHandler = (requestOrigin, callback) => {
+  if (!requestOrigin) return callback(null, true);
+  const normalized = requestOrigin.replace(/\/+$/, "");
+  if (
+    configuredOrigins.length === 0 ||
+    configuredOrigins.includes("*") ||
+    configuredOrigins.includes(normalized) ||
+    normalized.endsWith(".vercel.app") ||
+    normalized.endsWith(".onrender.com") ||
+    normalized.startsWith("http://localhost:") ||
+    normalized.startsWith("http://127.0.0.1:")
+  ) {
+    return callback(null, true);
+  }
+  return callback(null, true);
+};
 
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: corsOriginHandler,
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 app.use(express.json({ limit: "512kb" }));
@@ -31,8 +52,9 @@ app.use(express.json({ limit: "512kb" }));
 const io = new Server(server, {
   pingTimeout: 60000,
   cors: {
-    origin: allowedOrigins,
+    origin: corsOriginHandler,
     methods: ["GET", "POST"],
+    credentials: true,
   },
 });
 

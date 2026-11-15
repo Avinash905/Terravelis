@@ -20,7 +20,7 @@ export default function RadioMiniPlayer({
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 20, opacity: 0 }}
           transition={{ duration: 0.18 }}
-          className="fixed bottom-16 left-3 z-30 w-72 surface-panel rounded-lg p-2.5 flex items-center gap-2.5"
+          className="fixed bottom-14 sm:bottom-16 left-2.5 right-2.5 sm:right-auto sm:left-3 z-25 sm:w-72 surface-panel rounded-lg p-2.5 flex items-center gap-2.5"
         >
           <button
             onClick={onTogglePlay}

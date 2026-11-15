@@ -47,7 +47,7 @@ export default function CompareOverlayCard({
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.16 }}
-          className="fixed top-16 left-1/2 -translate-x-1/2 z-30 w-[calc(100vw-1.5rem)] max-w-md surface-panel rounded-xl p-3.5"
+          className="fixed top-14 sm:top-16 inset-x-2.5 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 z-30 sm:w-full max-w-md surface-panel rounded-xl p-3 sm:p-3.5"
         >
           {awaitingSecondPoint && !targetIntel ? (
             <div className="flex items-center justify-between gap-3">
@@ -55,8 +55,8 @@ export default function CompareOverlayCard({
                 <div className="text-[10.5px] font-mono-tech uppercase tracking-wider text-amber-400">
                   Compare Mode
                 </div>
-                <div className="text-[12.5px] text-zinc-200 mt-0.5 truncate">
-                  Click any second place on Earth (or use ⌘K) to compare with{" "}
+                <div className="text-[12px] sm:text-[12.5px] text-zinc-200 mt-0.5 line-clamp-2">
+                  Click any second place on Earth to compare with{" "}
                   <strong className="text-white font-semibold">
                     {originIntel.location?.name}
                   </strong>
