@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: chatterbox-telemetry-api
+    name: terravelis-api
     runtime: node
     plan: free
     buildCommand: npm run render-build

@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-const DEV_FALLBACK_SECRET = "chatterbox-global-pulse-fallback-secret-2026";
+const DEV_FALLBACK_SECRET = "terravelis-global-telemetry-fallback-secret-2026";
 
 const getJwtSecret = () => {
   if (process.env.JWT_SECRET) return process.env.JWT_SECRET;

@@ -41,7 +41,7 @@ app.set("io", io);
 app.get("/api/health", (_req, res) => {
   res.json({
     ok: true,
-    service: "ChatterBox Global Telemetry",
+    service: "Terravelis Global Telemetry",
     uptimeSeconds: Math.round(process.uptime()),
     dbConnected: isDbConnected(),
     viewers: io.engine.clientsCount,
@@ -85,7 +85,7 @@ io.on("connection", (socket) => {
 const bootstrap = async () => {
   await connectDB();
   server.listen(port, () => {
-    console.log(`[ChatterBox] Server listening on http://localhost:${port}`);
+    console.log(`[Terravelis] Server listening on http://localhost:${port}`);
     startRealtimeLoops(io, () => io.engine.clientsCount);
   });
 };

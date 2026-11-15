@@ -67,7 +67,7 @@ export default function QuickGuideModal({
             <div className="flex items-start justify-between gap-4 pb-3 border-b border-white/[0.08]">
               <div>
                 <h2 className="text-[16px] font-semibold text-white">
-                  Welcome to ChatterBox Earth
+                  Welcome to Terravelis
                 </h2>
                 <p className="text-[12px] text-zinc-400 mt-0.5">
                   Real-time planetary activity, world radio, and local discovery.

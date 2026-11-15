@@ -31,9 +31,9 @@ import { computeGreatCircleRoute, formatCountdown } from "./utils/formatters";
 
 const GlobeCanvas = lazy(() => import("./components/GlobeCanvas"));
 
-const GUEST_WATCHLIST_KEY = "chatterbox_guest_watchlist_v2";
-const AUTH_TOKEN_KEY = "chatterbox_auth_token_v2";
-const GUIDE_SEEN_KEY = "chatterbox_guide_seen_v1";
+const GUEST_WATCHLIST_KEY = "terravelis_guest_watchlist_v1";
+const AUTH_TOKEN_KEY = "terravelis_auth_token_v1";
+const GUIDE_SEEN_KEY = "terravelis_guide_seen_v1";
 
 const getNowUtcMinutes = () => {
   const now = new Date();

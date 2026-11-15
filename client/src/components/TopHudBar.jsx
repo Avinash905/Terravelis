@@ -48,7 +48,7 @@ export default function TopHudBar({
             >
               <span className="w-2 h-2 rounded-full bg-emerald-400" />
               <span className="text-[13px] font-semibold tracking-tight text-white">
-                ChatterBox
+                Terravelis
               </span>
               <span className="hidden sm:inline text-[12px] text-zinc-500">/ Earth</span>
             </button>

@@ -50,7 +50,7 @@ export const exportTelemetryCardPng = async ({ canvasDataUrl, intel }) => {
 
   ctx.fillStyle = "#fafafa";
   ctx.font = "600 18px Inter, -apple-system, sans-serif";
-  ctx.fillText("ChatterBox / Earth Telemetry", 68, 54);
+  ctx.fillText("Terravelis / Earth Telemetry", 68, 54);
 
   ctx.fillStyle = "#a1a1aa";
   ctx.font = "500 13px 'JetBrains Mono', monospace";
@@ -101,7 +101,7 @@ export const exportTelemetryCardPng = async ({ canvasDataUrl, intel }) => {
   const slug = (intel?.location?.name || "earth-telemetry")
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-");
-  link.download = `chatterbox-${slug}.png`;
+  link.download = `terravelis-${slug}.png`;
   link.href = out.toDataURL("image/png");
   link.click();
   return true;

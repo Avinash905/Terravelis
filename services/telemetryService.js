@@ -1,5 +1,5 @@
 const USER_AGENT =
-  "ChatterBoxEarth/2.0 (https://github.com/Avinash905/ChatterBox; contact: avinash.90527@gmail.com)";
+  "Terravelis/2.0 (https://github.com/Avinash905/Terravelis; contact: avinash.90527@gmail.com)";
 
 const cache = new Map();
 

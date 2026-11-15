@@ -180,8 +180,8 @@ const GlobeCanvas = forwardRef(function GlobeCanvas(
       controls.autoRotate = autoRotate;
       controls.autoRotateSpeed = 0.25;
 
-      if (!controls._chatterboxBound) {
-        controls._chatterboxBound = true;
+      if (!controls._terravelisBound) {
+        controls._terravelisBound = true;
         controls.addEventListener("start", () => {
           if (onUserDragGlobe) {
             onUserDragGlobe();
@@ -191,8 +191,8 @@ const GlobeCanvas = forwardRef(function GlobeCanvas(
     }
 
     const scene = globe.scene();
-    if (scene && !scene.userData.chatterboxLit) {
-      scene.userData.chatterboxLit = true;
+    if (scene && !scene.userData.terravelisLit) {
+      scene.userData.terravelisLit = true;
       // Tone down default ambient light slightly so the day/night solar terminator is clearly visible
       scene.children.forEach((child) => {
         if (child.isAmbientLight) {

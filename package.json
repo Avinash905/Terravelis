@@ -1,7 +1,7 @@
 {
-  "name": "chatterbox",
+  "name": "terravelis",
   "version": "2.0.0",
-  "description": "ChatterBox — Real-time 3D Earth Telemetry, Global Chatter & Location Intelligence",
+  "description": "Terravelis — Real-time 3D Earth Telemetry & Location Intelligence",
   "main": "server.js",
   "engines": {
     "node": ">=22.0.0"
