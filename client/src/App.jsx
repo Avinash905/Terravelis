@@ -185,21 +185,23 @@ export default function App() {
   useEffect(() => {
     let mounted = true;
 
-    fetchSnapshot()
-      .then((data) => {
-        if (!mounted) return;
-        setSnapshot({
-          earthquakes: data.earthquakes || [],
-          naturalEvents: data.naturalEvents || [],
-          iss: data.iss || null,
-          astronauts: data.astronauts || null,
-          launches: data.launches || [],
-          radios: data.radios || [],
-          cables: data.cables || [],
-          beacons: data.beacons || [],
-        });
-        setChatter(data.chatter || []);
-      })
+    const applySnapshot = (data) => {
+      if (!mounted) return;
+      setSnapshot({
+        earthquakes: data.earthquakes || [],
+        naturalEvents: data.naturalEvents || [],
+        iss: data.iss || null,
+        astronauts: data.astronauts || null,
+        launches: data.launches || [],
+        radios: data.radios || [],
+        cables: data.cables || [],
+        beacons: data.beacons || [],
+      });
+      setChatter(data.chatter || []);
+    };
+
+    fetchSnapshot(applySnapshot)
+      .then(applySnapshot)
       .finally(() => {
         if (mounted) setBootLoading(false);
       });
@@ -447,8 +449,8 @@ export default function App() {
         tag: "City X-Ray",
         title: "Tokyo Metropolis, Japan",
         subtitle: "Live airspace, local weather, landmarks & FM streams",
-        lat: 35.6762,
-        lng: 139.6503,
+        lat: 35.6812,
+        lng: 139.7671,
         altitude: 1.18,
       },
       {
@@ -1106,7 +1108,7 @@ export default function App() {
           setGuideOpen(false);
         }}
         onStartTour={handleToggleTour}
-        onTrySampleCity={() => handleFlyAndInspect(35.6762, 139.6503, 1.22)}
+        onTrySampleCity={() => handleFlyAndInspect(35.6812, 139.7671, 1.22)}
         onTryIss={handleToggleFollowIss}
       />
     </main>

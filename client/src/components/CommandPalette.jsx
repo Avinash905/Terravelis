@@ -5,7 +5,7 @@ import { searchWorldQuery } from "../services/earthClient";
 
 const FEATURED_DESTINATIONS = [
   { id: "feat-hyd", title: "Hyderabad", subtitle: "Telangana, India", lat: 17.385, lng: 78.4867 },
-  { id: "feat-tok", title: "Tokyo", subtitle: "Kanto, Japan", lat: 35.6762, lng: 139.6503 },
+  { id: "feat-tok", title: "Tokyo", subtitle: "Kanto, Japan", lat: 35.6812, lng: 139.7671 },
   { id: "feat-rey", title: "Reykjavik", subtitle: "Reykjanes Rift, Iceland", lat: 64.1466, lng: -21.9426 },
   { id: "feat-isro", title: "Sriharikota", subtitle: "Satish Dhawan Space Centre, India", lat: 13.7199, lng: 80.2304 },
   { id: "feat-par", title: "Paris", subtitle: "Ile-de-France, France", lat: 48.8566, lng: 2.3522 },

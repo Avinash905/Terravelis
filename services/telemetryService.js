@@ -745,7 +745,7 @@ const getGlobalSnapshot = async () => {
 };
 
 const MUNDANE_PLACE_RE =
-  /\b(station|railway|metro stop|bus stop|high school|elementary school|middle school|university|college|hospital|post office|city hall|prefecture|municipality|constituency|district court|interchange|expressway)\b|^(list of |tourism in |outline of |history of )/i;
+  /\b(station|railway|metro stop|bus stop|school|kindergarten|university|college|hospital|clinic|post office|city hall|prefecture|municipality|constituency|district court|interchange|expressway|ward)\b|^(list of |tourism in |outline of |history of )/i;
 
 const fetchWikipediaLandmarks = async (lat, lng, fallbackQuery) => {
   const mapPages = (pagesObj, originLat, originLng, isPopularSearch = false) => {
@@ -1002,6 +1002,47 @@ const fetchLocalRadios = async (lat, lng, countryCode) => {
   }
 };
 
+const mapMetSymbolToCode = (sym = "") => {
+  if (sym.includes("thunder")) return 95;
+  if (sym.includes("snow")) return 73;
+  if (sym.includes("heavyrain")) return 65;
+  if (sym.includes("rain") || sym.includes("sleet")) return 61;
+  if (sym.includes("fog")) return 45;
+  if (sym.includes("cloudy")) return 3;
+  if (sym.includes("partlycloudy") || sym.includes("fair")) return 2;
+  return 0;
+};
+
+const fetchMetNoFallback = async (lat, lng) => {
+  try {
+    const data = await fetchJson(
+      `https://api.met.no/weatherapi/locationforecast/2.0/compact?lat=${lat.toFixed(4)}&lon=${lng.toFixed(4)}`,
+      4500
+    );
+    const entry = data?.properties?.timeseries?.[0]?.data;
+    const details = entry?.instant?.details;
+    if (!details || typeof details.air_temperature !== "number") return null;
+    const sym =
+      entry?.next_1_hours?.summary?.symbol_code ||
+      entry?.next_6_hours?.summary?.symbol_code ||
+      "clearsky_day";
+    const temp = Math.round(details.air_temperature * 10) / 10;
+    return {
+      tempC: temp,
+      feelsLikeC: temp,
+      humidity: Math.round(details.relative_humidity ?? 60),
+      isDay: !sym.includes("_night"),
+      precipitationMm: entry?.next_1_hours?.details?.precipitation_amount ?? 0,
+      weatherCode: mapMetSymbolToCode(sym),
+      windKmh: Math.round((details.wind_speed || 0) * 3.6),
+      windDeg: Math.round(details.wind_from_direction || 0),
+      uvIndex: null,
+    };
+  } catch {
+    return null;
+  }
+};
+
 const getPlaceIntelligence = async (rawLat, rawLng, beacons = []) => {
   const lat = Math.max(-89.9, Math.min(89.9, Number(rawLat)));
   const lng = ((((Number(rawLng) + 180) % 360) + 360) % 360) - 180;
@@ -1096,6 +1137,33 @@ const getPlaceIntelligence = async (rawLat, rawLng, beacons = []) => {
 
   const currentW = weatherRes?.current;
   const currentAqi = aqiRes?.current;
+  const fallbackMetW = !currentW ? await fetchMetNoFallback(lat, lng) : null;
+  const approxUtcOffsetSeconds = Math.round(lng / 15) * 3600;
+
+  const resolvedWeather = currentW
+    ? {
+        tempC: Math.round(currentW.temperature_2m * 10) / 10,
+        feelsLikeC: Math.round(currentW.apparent_temperature * 10) / 10,
+        humidity: currentW.relative_humidity_2m,
+        isDay: Boolean(currentW.is_day),
+        precipitationMm: currentW.precipitation,
+        weatherCode: currentW.weather_code,
+        windKmh: Math.round(currentW.wind_speed_10m),
+        windDeg: currentW.wind_direction_10m,
+        uvIndex:
+          typeof currentW.uv_index === "number"
+            ? Math.round(currentW.uv_index * 10) / 10
+            : null,
+        usAqi: currentAqi?.us_aqi ?? null,
+        pm25: currentAqi?.pm2_5 ?? null,
+      }
+    : fallbackMetW
+    ? {
+        ...fallbackMetW,
+        usAqi: currentAqi?.us_aqi ?? null,
+        pm25: currentAqi?.pm2_5 ?? null,
+      }
+    : null;
 
   const basePayload = {
     coordinates: {
@@ -1110,27 +1178,10 @@ const getPlaceIntelligence = async (rawLat, rawLng, beacons = []) => {
       continent,
       isOcean: !countryCode,
       timezone: weatherRes?.timezone || "UTC",
-      utcOffsetSeconds: weatherRes?.utc_offset_seconds ?? 0,
+      utcOffsetSeconds: weatherRes?.utc_offset_seconds ?? approxUtcOffsetSeconds,
     },
     country: countryRes,
-    weather: currentW
-      ? {
-          tempC: Math.round(currentW.temperature_2m * 10) / 10,
-          feelsLikeC: Math.round(currentW.apparent_temperature * 10) / 10,
-          humidity: currentW.relative_humidity_2m,
-          isDay: Boolean(currentW.is_day),
-          precipitationMm: currentW.precipitation,
-          weatherCode: currentW.weather_code,
-          windKmh: Math.round(currentW.wind_speed_10m),
-          windDeg: currentW.wind_direction_10m,
-          uvIndex:
-            typeof currentW.uv_index === "number"
-              ? Math.round(currentW.uv_index * 10) / 10
-              : null,
-          usAqi: currentAqi?.us_aqi ?? null,
-          pm25: currentAqi?.pm2_5 ?? null,
-        }
-      : null,
+    weather: resolvedWeather,
     landmarks: landmarksRes,
     aircraft: aircraftRes,
     radios: radiosRes,
@@ -1141,7 +1192,7 @@ const getPlaceIntelligence = async (rawLat, rawLng, beacons = []) => {
     },
   };
 
-  setCached(gridKey, basePayload, 8 * 60 * 1000);
+  setCached(gridKey, basePayload, resolvedWeather ? 8 * 60 * 1000 : 60 * 1000);
 
   return {
     ...basePayload,

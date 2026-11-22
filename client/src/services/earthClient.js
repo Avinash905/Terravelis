@@ -2,6 +2,11 @@ import { io } from "socket.io-client";
 
 const API_BASE = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
 
+// Pre-warm sleeping free-tier backend immediately at module load
+if (API_BASE && typeof window !== "undefined") {
+  fetch(`${API_BASE}/api/health`, { mode: "cors" }).catch(() => {});
+}
+
 const apiFetch = async (path, options = {}, timeoutMs = 12000) => {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -162,32 +167,103 @@ const fetchDirectBrowserFallbackSnapshot = async () => {
   };
 };
 
-export const fetchSnapshot = async () => {
+const fetchBrowserWeatherAndTz = async (lat, lng) => {
+  const [wRes, aqiRes] = await Promise.allSettled([
+    fetch(
+      `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,precipitation,weather_code,wind_speed_10m,wind_direction_10m,uv_index&timezone=auto`,
+      { signal: AbortSignal.timeout(4500) }
+    ).then((r) => (r.ok ? r.json() : null)),
+    fetch(
+      `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=${lat}&longitude=${lng}&current=us_aqi,pm2_5`,
+      { signal: AbortSignal.timeout(4000) }
+    ).then((r) => (r.ok ? r.json() : null)),
+  ]);
+
+  const wJson = wRes.status === "fulfilled" ? wRes.value : null;
+  const aqiJson = aqiRes.status === "fulfilled" ? aqiRes.value : null;
+  const cur = wJson?.current;
+
+  return {
+    timezone: wJson?.timezone || null,
+    utcOffsetSeconds: wJson?.utc_offset_seconds ?? null,
+    usAqi: aqiJson?.current?.us_aqi ?? null,
+    pm25: aqiJson?.current?.pm2_5 ?? null,
+    weather: cur
+      ? {
+          tempC: Math.round(cur.temperature_2m * 10) / 10,
+          feelsLikeC: Math.round(cur.apparent_temperature * 10) / 10,
+          humidity: cur.relative_humidity_2m,
+          isDay: Boolean(cur.is_day),
+          precipitationMm: cur.precipitation,
+          weatherCode: cur.weather_code,
+          windKmh: Math.round(cur.wind_speed_10m),
+          windDeg: cur.wind_direction_10m,
+          uvIndex: typeof cur.uv_index === "number" ? Math.round(cur.uv_index * 10) / 10 : null,
+          usAqi: aqiJson?.current?.us_aqi ?? null,
+          pm25: aqiJson?.current?.pm2_5 ?? null,
+        }
+      : null,
+  };
+};
+
+export const fetchSnapshot = async (onLateServerSync) => {
   try {
-    return await apiFetch("/api/telemetry/snapshot", {}, 10000);
+    return await apiFetch("/api/telemetry/snapshot", {}, 2800);
   } catch {
+    if (API_BASE && onLateServerSync) {
+      apiFetch("/api/telemetry/snapshot", {}, 28000)
+        .then((fresh) => onLateServerSync(fresh))
+        .catch(() => {});
+    }
     return fetchDirectBrowserFallbackSnapshot();
   }
 };
 
 export const fetchPlaceIntel = async (lat, lng) => {
+  const browserWeatherPromise = fetchBrowserWeatherAndTz(lat, lng);
+
   try {
-    return await apiFetch(`/api/telemetry/place?lat=${lat}&lng=${lng}`, {}, 11000);
+    const [serverIntel, browserW] = await Promise.all([
+      apiFetch(`/api/telemetry/place?lat=${lat}&lng=${lng}`, {}, 6500),
+      browserWeatherPromise,
+    ]);
+
+    const mergedWeather = serverIntel.weather
+      ? {
+          ...serverIntel.weather,
+          usAqi: serverIntel.weather.usAqi ?? browserW.usAqi,
+          uvIndex: serverIntel.weather.uvIndex ?? browserW.weather?.uvIndex ?? null,
+        }
+      : browserW.weather;
+
+    return {
+      ...serverIntel,
+      location: {
+        ...serverIntel.location,
+        timezone:
+          serverIntel.location?.timezone && serverIntel.location.timezone !== "UTC"
+            ? serverIntel.location.timezone
+            : browserW.timezone || serverIntel.location?.timezone || "UTC",
+        utcOffsetSeconds:
+          serverIntel.location?.utcOffsetSeconds ||
+          browserW.utcOffsetSeconds ||
+          Math.round(lng / 15) * 3600,
+      },
+      weather: mergedWeather,
+    };
   } catch {
-    const [geo, weather, wiki] = await Promise.allSettled([
+    const [geo, browserW, wiki] = await Promise.allSettled([
       fetch(
         `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${lng}&localityLanguage=en`
       ).then((r) => r.json()),
-      fetch(
-        `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lng}&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,weather_code,wind_speed_10m,wind_direction_10m,uv_index&timezone=auto`
-      ).then((r) => r.json()),
+      browserWeatherPromise,
       fetch(
         `https://en.wikipedia.org/w/api.php?action=query&generator=geosearch&ggscoord=${lat}|${lng}&ggsradius=10000&ggslimit=10&prop=pageimages|extracts|coordinates|info&pithumbsize=600&exintro=1&explaintext=1&exchars=220&inprop=url&format=json&origin=*`
       ).then((r) => r.json()),
     ]);
 
     const g = geo.status === "fulfilled" ? geo.value : {};
-    const w = weather.status === "fulfilled" ? weather.value?.current : null;
+    const bw = browserW.status === "fulfilled" ? browserW.value : {};
     const pages = wiki.status === "fulfilled" ? Object.values(wiki.value?.query?.pages || {}) : [];
 
     return {
@@ -199,7 +275,8 @@ export const fetchPlaceIntel = async (lat, lng) => {
         countryCode: g.countryCode || "",
         continent: g.continent || "",
         isOcean: !g.countryCode,
-        timezone: weather.status === "fulfilled" ? weather.value?.timezone || "UTC" : "UTC",
+        timezone: bw.timezone || "UTC",
+        utcOffsetSeconds: bw.utcOffsetSeconds ?? Math.round(lng / 15) * 3600,
       },
       country: g.countryCode
         ? {
@@ -213,18 +290,7 @@ export const fetchPlaceIntel = async (lat, lng) => {
             languages: [],
           }
         : null,
-      weather: w
-        ? {
-            tempC: Math.round(w.temperature_2m * 10) / 10,
-            feelsLikeC: Math.round(w.apparent_temperature * 10) / 10,
-            humidity: w.relative_humidity_2m,
-            isDay: Boolean(w.is_day),
-            weatherCode: w.weather_code,
-            windKmh: Math.round(w.wind_speed_10m),
-            uvIndex: w.uv_index ?? null,
-            usAqi: null,
-          }
-        : null,
+      weather: bw.weather || null,
       landmarks: pages.map((p) => ({
         id: String(p.pageid),
         title: p.title,
@@ -266,11 +332,15 @@ export const searchWorldQuery = async (q) => {
 };
 
 export const createBeacon = (payload, token) =>
-  apiFetch("/api/beacons", {
-    method: "POST",
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-    body: JSON.stringify(payload),
-  });
+  apiFetch(
+    "/api/beacons",
+    {
+      method: "POST",
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      body: JSON.stringify(payload),
+    },
+    26000
+  );
 
 export const pulseBeacon = (id) =>
   apiFetch(`/api/beacons/${id}/pulse`, {
@@ -278,16 +348,24 @@ export const pulseBeacon = (id) =>
   });
 
 export const loginUser = (credentials) =>
-  apiFetch("/api/user/login", {
-    method: "POST",
-    body: JSON.stringify(credentials),
-  });
+  apiFetch(
+    "/api/user/login",
+    {
+      method: "POST",
+      body: JSON.stringify(credentials),
+    },
+    26000
+  );
 
 export const registerUser = (payload) =>
-  apiFetch("/api/user/register", {
-    method: "POST",
-    body: JSON.stringify(payload),
-  });
+  apiFetch(
+    "/api/user/register",
+    {
+      method: "POST",
+      body: JSON.stringify(payload),
+    },
+    26000
+  );
 
 export const fetchMe = (token) =>
   apiFetch("/api/user/me", {

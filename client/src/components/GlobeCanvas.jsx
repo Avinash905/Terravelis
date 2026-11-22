@@ -89,7 +89,7 @@ const updateSunlightPosition = (light, minutesUtc, surfaceMode) => {
   const z = r * Math.cos(declinationRad) * Math.cos(phi);
 
   light.position.set(x, y, z);
-  light.intensity = surfaceMode === "day" ? 2.1 : 1.35;
+  light.intensity = surfaceMode === "day" ? 2.15 : 0.95;
 };
 
 const GlobeCanvas = forwardRef(function GlobeCanvas(
@@ -193,17 +193,16 @@ const GlobeCanvas = forwardRef(function GlobeCanvas(
     const scene = globe.scene();
     if (scene && !scene.userData.terravelisLit) {
       scene.userData.terravelisLit = true;
-      // Tone down default ambient light slightly so the day/night solar terminator is clearly visible
       scene.children.forEach((child) => {
         if (child.isAmbientLight) {
-          child.intensity = 0.55;
+          child.intensity = surfaceMode === "day" ? 0.38 : 1.6;
         }
         if (child.isDirectionalLight) {
           child.intensity = 0.2;
         }
       });
 
-      const sunLight = new THREE.DirectionalLight(0xfff4e6, 1.35);
+      const sunLight = new THREE.DirectionalLight(0xfff4e6, 0.95);
       updateSunlightPosition(sunLight, solarMinutesUtc, surfaceMode);
       scene.add(sunLight);
       sunLightRef.current = sunLight;
@@ -216,7 +215,7 @@ const GlobeCanvas = forwardRef(function GlobeCanvas(
     if (scene) {
       scene.children.forEach((child) => {
         if (child.isAmbientLight) {
-          child.intensity = surfaceMode === "day" ? 0.35 : 0.58;
+          child.intensity = surfaceMode === "day" ? 0.38 : 1.6;
         }
       });
     }
